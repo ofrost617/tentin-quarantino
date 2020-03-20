@@ -1,0 +1,10 @@
+{
+  "name": "spring-react-app",
+  "description": "Sample application using React with Spring Boot",
+  "dependencies": {},
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+  }
+}

@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.2.5.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id "com.github.node-gradle.node" version "2.2.3"
 }
 
 group = 'com.delivery-dashboard'
@@ -22,3 +23,42 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+node {
+	download = true
+
+	// Set the work directory for unpacking node
+	workDir = file("${project.buildDir}/nodejs")
+
+	// Set the work directory for NPM
+	npmWorkDir = file("${project.buildDir}/npm")
+}
+
+task appNpmInstall(type: NpmTask) {
+	description = "Installs all dependencies from package.json"
+	workingDir = file("${project.projectDir}/src/main/front-end")
+	args = ["install"]
+}
+
+task appNpmBuild(type: NpmTask) {
+	description = "Builds production version of the webapp"
+	workingDir = file("${project.projectDir}/src/main/front-end")
+	args = ["run", "build"]
+}
+
+task copyWebApp(type: Copy) {
+	from 'src/main/front-end/build'
+	into 'build/resources/main/static/.'
+}
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'com.deliverydashboard.deliverydashboard.DeliveryDashboardApplication'
+		)
+	}
+}
+
+appNpmBuild.dependsOn appNpmInstall
+copyWebApp.dependsOn appNpmBuild
+compileJava.dependsOn copyWebApp
