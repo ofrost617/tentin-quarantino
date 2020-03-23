@@ -47,7 +47,7 @@ task appNpmBuild(type: NpmTask) {
 }
 
 task copyWebApp(type: Copy) {
-	from 'src/main/front-end/build'
+	from 'src/main/front-end/out'
 	into 'build/resources/main/static/.'
 }
 
@@ -58,6 +58,7 @@ jar {
 		)
 	}
 }
+//jar.enabled = true
 
 appNpmBuild.dependsOn appNpmInstall
 copyWebApp.dependsOn appNpmBuild
