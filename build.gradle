@@ -46,6 +46,12 @@ task appNpmBuild(type: NpmTask) {
 	args = ["run", "build"]
 }
 
+task appNpmExport(type: NpmTask) {
+	description = "Builds production version of the webapp"
+	workingDir = file("${project.projectDir}/src/main/front-end")
+	args = ["run", "export"]
+}
+
 task copyWebApp(type: Copy) {
 	from 'src/main/front-end/out'
 	into 'build/resources/main/static/.'
@@ -58,8 +64,8 @@ jar {
 		)
 	}
 }
-//jar.enabled = true
 
 appNpmBuild.dependsOn appNpmInstall
-copyWebApp.dependsOn appNpmBuild
+appNpmExport.dependsOn appNpmBuild
+copyWebApp.dependsOn appNpmExport
 compileJava.dependsOn copyWebApp
